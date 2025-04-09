@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Typing Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3776ab;
+            --secondary: #ffd43b;
+            --dark: #1e3a8a;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+        }
+        
+        .keyboard-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+            padding: 0.25rem;
+            margin: 0.1rem;
+            border-radius: 0.25rem;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 500;
+            transition: all 0.1s ease;
+        }
+        
+        .keyboard-key.active {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(2px);
+            box-shadow: 0 0 2px rgba(0,0,0,0.2);
+        }
+        
+        .keyboard-key.finger-1 { background-color: #fecaca; }
+        .keyboard-key.finger-2 { background-color: #fed7aa; }
+        .keyboard-key.finger-3 { background-color: #fef08a; }
+        .keyboard-key.finger-4 { background-color: #bbf7d0; }
+        .keyboard-key.finger-5 { background-color: #bfdbfe; }
+        .keyboard-key.finger-6 { background-color: #ddd6fe; }
+        .keyboard-key.finger-7 { background-color: #fbcfe8; }
+        .keyboard-key.finger-8 { background-color: #c7d2fe; }
+        
+        .typing-text {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+        
+        .correct {
+            color: #10b981;
+        }
+        
+        .incorrect {
+            color: #ef4444;
+            text-decoration: underline;
+        }
+        
+        .current {
+            background-color: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .hand-diagram {
+            position: relative;
+            height: 200px;
+        }
+        
+        .finger-highlight {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(59, 130, 246, 0.5);
+            transform: translate(-50%, -50%);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+            70% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-blue-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-keyboard text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Python Typing Trainer</h1>
+                </div>
+                <nav>
+                    <ul class="flex space-x-6">
+                        <li><a href="#" class="hover:text-yellow-200 transition" onclick="showSection('home')">Home</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition" onclick="showSection('lessons')">Lessons</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition" onclick="showSection('practice')">Practice</a></li>
+                        <li><a href="#" class="hover:text-yellow-200 transition" onclick="showSection('progress')">Progress</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8" id="app-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+                <h2 class="text-3xl font-bold text-blue-800 mb-4">Welcome to Python Typing Trainer</h2>
+                <p class="text-lg mb-6">Master touch typing while learning Python syntax. This trainer will help you develop muscle memory for the QWERTY keyboard while familiarizing you with Python programming constructs.</p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-keyboard text-blue-700 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-blue-800">Touch Typing</h3>
+                        </div>
+                        <p class="text-gray-700">Learn to type without looking at the keyboard through structured lessons that focus on finger placement and movement.</p>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-6 rounded-lg border border-yellow-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                                <i class="fab fa-python text-yellow-700 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-yellow-800">Python Focus</h3>
+                        </div>
+                        <p class="text-gray-700">Practice with real Python code snippets, from basic syntax to advanced concepts, making your learning directly applicable.</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg border border-green-100">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-green-100 p-3 rounded-full mr-4">
+                                <i class="fas fa-chart-line text-green-700 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-green-800">Progress Tracking</h3>
+                        </div>
+                        <p class="text-gray-700">Detailed analytics help identify your weak areas and track improvement over time with personalized recommendations.</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button onclick="showSection('lessons')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-full text-lg transition transform hover:scale-105 shadow-lg">
+                        Start Learning <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Quick Start Guide</h3>
+                    <ol class="list-decimal pl-5 space-y-3 text-gray-700">
+                        <li>Begin with the <strong>Home Row</strong> lessons to learn proper finger placement</li>
+                        <li>Progress through lessons in order - each builds on the previous</li>
+                        <li>Use the <strong>Practice Mode</strong> to reinforce what you've learned</li>
+                        <li>Check your <strong>Progress</strong> page to identify areas needing improvement</li>
+                        <li>Practice daily for at least 15 minutes for best results</li>
+                    </ol>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Today's Challenge</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="font-mono text-sm text-gray-800">def calculate_average(numbers):<br>&nbsp;&nbsp;&nbsp;&nbsp;return sum(numbers) / len(numbers)</p>
+                    </div>
+                    <p class="text-gray-700 mb-4">Try typing this Python function. Focus on proper finger placement for the special characters.</p>
+                    <button onclick="showSection('practice')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded transition">
+                        Try Now <i class="fas fa-bolt ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lessons Section -->
+        <section id="lessons" class="section hidden">
+            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">Typing Lessons</h2>
+                
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <button class="lesson-filter-btn active px-4 py-2 rounded-full bg-blue-100 text-blue-800 font-medium" data-level="all">All Lessons</button>
+                    <button class="lesson-filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-800 font-medium" data-level="beginner">Beginner</button>
+                    <button class="lesson-filter-btn px-4 py-2 rounded-full bg-green-100 text-green-800 font-medium" data-level="intermediate">Intermediate</button>
+                    <button class="lesson-filter-btn px-4 py-2 rounded-full bg-purple-100 text-purple-800 font-medium" data-level="advanced">Advanced</button>
+                    <button class="lesson-filter-btn px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 font-medium" data-level="python">Python Focus</button>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="lessons-container">
+                    <!-- Lessons will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">Finger Placement Guide</h3>
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold mb-3">Home Row Position</h4>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                            <div class="keyboard-row flex justify-center mb-1">
+                                <div class="keyboard-key finger-4">Q</div>
+                                <div class="keyboard-key finger-3">W</div>
+                                <div class="keyboard-key finger-2">E</div>
+                                <div class="keyboard-key finger-1">R</div>
+                                <div class="keyboard-key finger-1">T</div>
+                                <div class="keyboard-key finger-1">Y</div>
+                                <div class="keyboard-key finger-2">U</div>
+                                <div class="keyboard-key finger-3">I</div>
+                                <div class="keyboard-key finger-4">O</div>
+                                <div class="keyboard-key finger-5">P</div>
+                            </div>
+                            <div class="keyboard-row flex justify-center mb-1">
+                                <div class="keyboard-key finger-4">A</div>
+                                <div class="keyboard-key finger-3">S</div>
+                                <div class="keyboard-key finger-2">D</div>
+                                <div class="keyboard-key finger-1">F</div>
+                                <div class="keyboard-key finger-1">G</div>
+                                <div class="keyboard-key finger-1">H</div>
+                                <div class="keyboard-key finger-2">J</div>
+                                <div class="keyboard-key finger-3">K</div>
+                                <div class="keyboard-key finger-4">L</div>
+                                <div class="keyboard-key">;</div>
+                            </div>
+                            <div class="keyboard-row flex justify-center mb-1">
+                                <div class="keyboard-key finger-5">Z</div>
+                                <div class="keyboard-key finger-4">X</div>
+                                <div class="keyboard-key finger-3">C</div>
+                                <div class="keyboard-key finger-2">V</div>
+                                <div class="keyboard-key finger-1">B</div>
+                                <div class="keyboard-key finger-1">N</div>
+                                <div class="keyboard-key finger-2">M</div>
+                                <div class="keyboard-key finger-3">,</div>
+                                <div class="keyboard-key finger-4">.</div>
+                                <div class="keyboard-key finger-5">/</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">Each color represents a different finger. Keep your fingers on the home row (ASDF-JKL;) and reach for other keys from this position.</p>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold mb-3">Hand Diagram</h4>
+                        <div class="hand-diagram bg-gray-50 rounded-lg p-4 relative">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/QWERTY-home-keys-position.svg/1200px-QWERTY-home-keys-position.svg.png" alt="Hand position diagram" class="w-full h-full object-contain">
+                            <div class="finger-highlight" style="top: 30%; left: 30%;"></div>
+                        </div>
+                        <p class="text-gray-700 mt-3">The highlighted area shows which finger should be used for the current key in your lesson.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="section hidden">
+            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">Practice Mode</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <h3 class="text-xl font-semibold text-blue-800 mb-3">Python Syntax</h3>
+                        <p class="text-gray-700 mb-4">Practice with real Python code snippets ranging from basic to advanced concepts.</p>
+                        <button onclick="startPractice('python')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition w-full">
+                            Start <i class="fas fa-code ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg border border-green-100">
+                        <h3 class="text-xl font-semibold text-green-800 mb-3">Target Practice</h3>
+                        <p class="text-gray-700 mb-4">Focus on your weak areas based on your progress analytics.</p>
+                        <button onclick="startPractice('target')" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition w-full">
+                            Start <i class="fas fa-bullseye ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-100">
+                        <h3 class="text-xl font-semibold text-purple-800 mb-3">Speed Test</h3>
+                        <p class="text-gray-700 mb-4">Test your typing speed with random Python code under time pressure.</p>
+                        <button onclick="startPractice('speed')" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition w-full">
+                            Start <i class="fas fa-stopwatch ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="practice-container" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <span class="text-gray-600 mr-2">Time:</span>
+                                <span id="timer" class="font-bold">00:00</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-gray-600 mr-2">WPM:</span>
+                                <span id="wpm" class="font-bold">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-gray-600 mr-2">Accuracy:</span>
+                                <span id="accuracy" class="font-bold">100%</span>
+                            </div>
+                        </div>
+                        <button id="restart-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition">
+                            <i class="fas fa-redo mr-1"></i> Restart
+                        </button>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                        <div id="typing-text" class="typing-text whitespace-pre-wrap"></div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <textarea id="typing-input" class="w-full h-32 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Start typing here..."></textarea>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="hide-keyboard" class="rounded text-blue-600">
+                            <label for="hide-keyboard" class="text-gray-700">Hide keyboard guide</label>
+                        </div>
+                        <div id="completion-message" class="hidden">
+                            <span class="text-green-600 font-medium">Lesson completed! Great job!</span>
+                        </div>
+                    </div>
+                    
+                    <div id="keyboard-guide" class="mt-8 bg-gray-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold mb-3">Keyboard Guide</h4>
+                        <div class="keyboard-row flex justify-center mb-1">
+                            <div class="keyboard-key" data-key="q">Q</div>
+                            <div class="keyboard-key" data-key="w">W</div>
+                            <div class="keyboard-key" data-key="e">E</div>
+                            <div class="keyboard-key" data-key="r">R</div>
+                            <div class="keyboard-key" data-key="t">T</div>
+                            <div class="keyboard-key" data-key="y">Y</div>
+                            <div class="keyboard-key" data-key="u">U</div>
+                            <div class="keyboard-key" data-key="i">I</div>
+                            <div class="keyboard-key" data-key="o">O</div>
+                            <div class="keyboard-key" data-key="p">P</div>
+                        </div>
+                        <div class="keyboard-row flex justify-center mb-1">
+                            <div class="keyboard-key" data-key="a">A</div>
+                            <div class="keyboard-key" data-key="s">S</div>
+                            <div class="keyboard-key" data-key="d">D</div>
+                            <div class="keyboard-key" data-key="f">F</div>
+                            <div class="keyboard-key" data-key="g">G</div>
+                            <div class="keyboard-key" data-key="h">H</div>
+                            <div class="keyboard-key" data-key="j">J</div>
+                            <div class="keyboard-key" data-key="k">K</div>
+                            <div class="keyboard-key" data-key="l">L</div>
+                            <div class="keyboard-key" data-key=";">;</div>
+                        </div>
+                        <div class="keyboard-row flex justify-center">
+                            <div class="keyboard-key" data-key="z">Z</div>
+                            <div class="keyboard-key" data-key="x">X</div>
+                            <div class="keyboard-key" data-key="c">C</div>
+                            <div class="keyboard-key" data-key="v">V</div>
+                            <div class="keyboard-key" data-key="b">B</div>
+                            <div class="keyboard-key" data-key="n">N</div>
+                            <div class="keyboard-key" data-key="m">M</div>
+                            <div class="keyboard-key" data-key=",">,</div>
+                            <div class="keyboard-key" data-key=".">.</div>
+                            <div class="keyboard-key" data-key="/">/</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section id="progress" class="section hidden">
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h2 class="text-3xl font-bold text-blue-800 mb-6">Your Progress</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Typing Speed</h3>
+                            <span class="text-blue-600 font-bold">42 WPM</span>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <svg class="w-32 h-32" viewBox="0 0 36 36">
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#e6e6e6"
+                                    stroke-width="3"
+                                    stroke-dasharray="100, 100"
+                                />
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#3b82f6"
+                                    stroke-width="3"
+                                    stroke-dasharray="65, 100"
+                                    class="progress-ring__circle"
+                                />
+                                <text x="18" y="20.5" text-anchor="middle" font-size="6" fill="#3b82f6" font-weight="bold">65%</text>
+                                <text x="18" y="25" text-anchor="middle" font-size="3" fill="#6b7280">of 65 WPM goal</text>
+                            </svg>
+                        </div>
+                        <div class="mt-2 text-center text-sm text-gray-600">
+                            <p>+8 WPM from last week</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Accuracy</h3>
+                            <span class="text-green-600 font-bold">92%</span>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <svg class="w-32 h-32" viewBox="0 0 36 36">
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#e6e6e6"
+                                    stroke-width="3"
+                                    stroke-dasharray="100, 100"
+                                />
+                                <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#10b981"
+                                    stroke-width="3"
+                                    stroke-dasharray="92, 100"
+                                    class="progress-ring__circle"
+                                />
+                                <text x="18" y="20.5" text-anchor="middle" font-size="6" fill="#10b981" font-weight="bold">92%</text>
+                                <text x="18" y="25" text-anchor="middle" font-size="3" fill="#6b7280
+</html>
